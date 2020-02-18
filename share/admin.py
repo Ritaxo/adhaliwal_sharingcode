@@ -1,5 +1,9 @@
+
+# Register new models
 from django.contrib import admin
 
-# Register your models here.
-from .models import Script
+from .models import Script, Problem, Coder   #.models because models.py it is in the same folder
+
 admin.site.register(Script)
+admin.site.register(Problem)
+admin.site.register(Coder)
