@@ -1,4 +1,3 @@
-# Module 1 step 1  import User and Create Coder model
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -10,7 +9,7 @@ class Coder(models.Model):
 
     coder_yet = models.BooleanField(default=False)  # the user is not a coder yet
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    created = models.DateField(auto_now_add=True)   # maybe redundant, user model has date_joined
+    created = models.DateField(auto_now=True)   # maybe redundant, user model has date_joined
     updated = models.DateField(auto_now=True)
 
 # Module 1 Step 2  Create Problem model
@@ -23,7 +22,7 @@ class Problem(models.Model):
     image = models.ImageField(upload_to='myproblems/', blank=True)
     discipline = models.CharField(max_length=50, null=False, blank=False, unique=False)
     make_public = models.BooleanField(default=True)
-    created = models.DateField(auto_now_add=True)
+    created = models.DateField(auto_now=True)
     updated = models.DateField(auto_now=True)     # everytime the obj is saved, new time is saved
 
 # Module 0 Create Script model
@@ -32,8 +31,8 @@ class Script(models.Model):
     def __str__(self):
         return self.title
     # FK
-    coder = models.ForeignKey(Coder, on_delete=models.CASCADE, default=1)
-    problem = models.ForeignKey(Problem, on_delete=models.CASCADE, default=" ")
+    coder = models.ForeignKey(Coder, on_delete=models.CASCADE, null=True)
+    problem = models.ForeignKey(Problem, on_delete=models.CASCADE, null=True)
 
     title = models.CharField(max_length=50, null=False, blank=False, unique=False)
     description = models.TextField(max_length=100, null=False, blank=False, unique=False)
@@ -47,5 +46,5 @@ class Script(models.Model):
     image = models.ImageField(upload_to='myscripts/', blank=True)  # add an image for the algorithm or flow chart
     working_code = models.BooleanField(default=True)
 
-    created = models.DateField(auto_now_add=True)
+    created = models.DateField(auto_now=True)
     updated = models.DateField(auto_now=True)
