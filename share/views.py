@@ -6,9 +6,9 @@ from share.models import Script
 
 # Create your views here.
 # Module 0
-def index(request):
-    if request.method == "GET":
-        return HttpResponse("Hello World!")
+# def index(request):
+#     if request.method == "GET":
+#         return HttpResponse("Hello World!")
 
 # Module 1
 def get_first_script(request):
