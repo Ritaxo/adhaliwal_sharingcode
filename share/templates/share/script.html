@@ -1,0 +1,35 @@
+{% extends "share/base.html" %}
+
+{% block content %}
+
+<h2 class="title is-2">Python script </h2>
+        <div class="box">
+        <div class="content">
+            {% if script.make_public %}
+
+              Title of the python script: {{ script.title }} <br>
+              Description: {{ script.description }} <br>
+              Created on {{ script.created }} <br>
+              Problem that solves: {{ problem.title}}, posted by {{problem.coder.user.username}} <br>
+              Script written by: {{ script.coder.user.username}}
+              <br>
+              <br>
+              <div class="box">
+              Python script:
+                    <div class="code">
+                          <br>{{ script.code }}
+                      </div>
+              </div>
+
+              {% if user.id == script.coder.user.id %}
+                <a class="button is-primary is-medium" href="{% url 'share:edit_script' script.id %}">Make changes to this script </a>
+              {% endif %}
+ 
+            {% else %}
+            Sorry this script is private!
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock content %}

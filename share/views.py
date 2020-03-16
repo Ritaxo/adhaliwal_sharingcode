@@ -114,7 +114,8 @@ def publish_problem(request):
 # Module 4
 def show_problem(request, problem_id):
     pass
-
+def show_my_problem(request, problem_id):
+    pass
 
 def show_my_script(request, problem_id):
     pass

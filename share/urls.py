@@ -13,7 +13,7 @@ urlpatterns = [
     path('login', views.login_view, name='login'),
     path('logout', views.logout_view, name='logout'),
     path('signup', views.signup, name='signup'),
-    path('dashboard', views.dashboard_view, name='dashboard'),
+    path('dashboard', views.dashboard, name='dashboard'),
     path('publish_problem', views.publish_problem, name='publish_problem'),
     path('problem/<int:problem_id>/show', views.show_problem, name='show_problem'),
     # Module 4
