@@ -26,8 +26,27 @@ def get_first_script(request):
 
 # Module 2
 def index(request):
+    # if request.method == "GET":
+    #     return render(request, 'share/index.html')  # new line
+    # Testing http request object inside a view function
+    print('*********** Testing request obj ************')
+    print('request:' , request)
+    print('request.headers: ', request.headers)
+    print('request.headers["host"]:', request.headers['host'])
+    print('request.method: ', request.method)
+    print('request.user:' , request.user)
+    print('*******************************')
+
     if request.method == "GET":
-        return render(request, 'share/index.html')  # new line
+        if request.user.is_authenticated:
+            user = request.user
+            all_problems = Problem.objects.all()   # all_problems is a list object [   ]
+
+            return render(request, "share/index.html", {"user":user, "all_problems": all_problems})
+        else:
+            return redirect("share:login")
+    else:
+        return HttpResponse(status=500)
 # Module 3 Authentication functions
 
 def signup(request):
@@ -91,3 +110,42 @@ def dashboard_view(request):
     pass
 def publish_problem(request):
     pass
+
+# Module 4
+def show_problem(request, problem_id):
+    pass
+
+
+def show_my_script(request, problem_id):
+    pass
+# Module 4 testing
+def dashboard(request):
+    # retieve user, my_problems, my-scripts
+    # builds my_problems_scripts dict
+    # renders dashboard.html
+    # each problem should have a link show more details of a particular problem,
+    # this link starts route show_my_problem
+
+    # Testing http request object inside a view function
+    print('*********** Testing request obj ************')
+    print('request:' , request)
+    print('request.headers: ', request.headers)
+    print('request.headers["host"]:', request.headers['host'])
+    print('request.method: ', request.method)
+    print('request.user:' , request.user)
+    print('*******************************')
+
+    if request.method == "GET":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("share:login")
+        else:
+            my_problems = Problem.objects.filter(coder=user.coder.id)   # Problem table has a coder field (FK)
+            my_scripts =  Script.objects.filter(coder=user.coder.id)
+
+            print('*********** Testing objs retrieved from DB ************')
+            print('my_problems:', my_problems)
+            print('my_scripts:', my_scripts)
+            print('*******************************')
+
+            return render(request, "share/dashboard.html", {"my_scripts": my_scripts, "my_problems": my_problems })
