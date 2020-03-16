@@ -1,0 +1,42 @@
+<!-- show a problem belonging to any user  -->
+{% extends "share/base.html" %}
+{% block content %}
+
+<!--
+<hr> ##### testing ####  <br>
+problem: {{problem}} <br>
+scripts: {{scripts}} <br>
+######################## <br>
+-->
+    <div class="columns">
+        <div class="column">
+            <h2 class="title is-2">Problem defined by: <span style="color:blue">{{ problem.coder.user.username }}</span></h2>
+                    <div class="box">
+                    <div class="content">
+
+                          Title: {{ problem.title }} <br>
+                          <br>Description: {{ problem.description }} <br>
+                          <br> Discipline: {{ problem.discipline }} <br><br>
+                          <br>Solutions to this problem:
+                    <div class="box">
+
+                          {% for s in scripts %}
+                                  <div class="content">
+                                      <br>Script title: {{ s.title }}, written by  {{s.coder.user.username}}
+                                      <a class="button is-primary is-small" href="{% url 'share:show_script' s.id %}">Show the script ...</a>
+
+                                  </div>
+                          {% endfor %}
+                    </div>
+
+                    </div>
+                </div>
+
+                {% if user.id == problem.coder.user.id %}
+                 <a class="button is-primary is-medium" href="{% url 'share:edit_problem' problem.id %}">Make changes ... </a>
+                    {% endif %}
+
+        </div>
+    </div>
+
+{% endblock content %}

@@ -113,10 +113,22 @@ def publish_problem(request):
 
 # Module 4
 def show_problem(request, problem_id):
-    pass
+    if request.method == "GET":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("share:login")
+        else:
+            # make sure to import the fucntion get_object_or_404 from  django.shortcuts
+            problem = get_object_or_404(Problem, pk=problem_id)
+            scripts = Script.objects.filter(problem=problem_id)
+
+            return render(request, "share/problem.html", {"user":user, "problem":problem, "scripts": scripts})
 
 
 def show_my_script(request, problem_id):
+    pass
+
+def show_my_problem(request, problem_id):
     pass
 # Module 4 testing
 def dashboard(request):
@@ -149,3 +161,22 @@ def dashboard(request):
             print('*******************************')
 
             return render(request, "share/dashboard.html", {"my_scripts": my_scripts, "my_problems": my_problems })
+
+def show_script(request, script_id):
+    if request.method == "GET":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("share:login")
+        else:
+            # make sure to import the fucntion get_object_or_404 from  django.shortcuts
+            script = get_object_or_404(Script, pk=script_id)
+            problem = get_object_or_404(Problem, pk=script.problem.id)
+
+            return render(request, "share/script.html", {"user":user, "script": script, "problem":problem})
+
+
+def edit_problem(request, problem_id):
+    pass
+
+def edit_script(request, script_id):
+    pass

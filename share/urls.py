@@ -13,7 +13,7 @@ urlpatterns = [
     path('login', views.login_view, name='login'),
     path('logout', views.logout_view, name='logout'),
     path('signup', views.signup, name='signup'),
-    path('dashboard', views.dashboard_view, name='dashboard'),
+    path('dashboard', views.dashboard, name='dashboard'),
     path('publish_problem', views.publish_problem, name='publish_problem'),
     path('problem/<int:problem_id>/show', views.show_problem, name='show_problem'),
     # Module 4
@@ -21,6 +21,8 @@ path('problem/<int:problem_id>/show_my_problem', views.show_my_problem, name='sh
 
 path('script/<int:script_id>/show_my_script', views.show_my_script, name='show_my_script'),
 
-
+path('script/<int:script_id>/show', views.show_script, name='show_script'),
+path('problem/<int:problem_id>/edit', views.edit_problem,  name='edit_problem'),
+path('script/<int:script_id>/edit', views.edit_script, name='edit_script'),
 
 ]
