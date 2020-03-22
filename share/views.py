@@ -124,12 +124,45 @@ def show_problem(request, problem_id):
 
             return render(request, "share/problem.html", {"user":user, "problem":problem, "scripts": scripts})
 
+def get_script(request, script_id):
+    return render(request, "share/script.html")
 
-def show_my_script(request, problem_id):
-    pass
+
+
+def show_my_script(request, script_id):
+    if request.method == "GET":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("share:login")
+        else:
+            # make sure to import the fucntion get_object_or_404 from  django.shortcuts
+            my_script = get_object_or_404(Script, pk=script_id)
+            problem = get_object_or_404(Problem, pk=script.problem.id)
+            print('*********** Testing request obj ************')
+            print('my_script:' , script_id)
+            print('problem:' , problem)
+            print('*******************************')
+
+            return render(request, "share/my_script.html", {"user":user, "my_script": script, "problem":problem})
+
 
 def show_my_problem(request, problem_id):
-    pass
+    if request.method == "GET":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("share:login")
+        else:
+            # make sure to import the fucntion get_object_or_404 from  django.shortcuts
+            my_problem = get_object_or_404(Problem, pk=problem_id)
+            scripts = Script.objects.filter(problem=problem_id)
+
+            print('*********** Testing request obj ************')
+            print('my_problem: ', problem_id)
+            print('scripts:' , request)
+            print('*******************************')
+
+            return render(request, "share/my_problem.html", {"user":user, "my_problem":problem, "scripts": scripts})
+
 # Module 4 testing
 def dashboard(request):
     # retieve user, my_problems, my-scripts

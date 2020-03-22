@@ -17,12 +17,14 @@ urlpatterns = [
     path('publish_problem', views.publish_problem, name='publish_problem'),
     path('problem/<int:problem_id>/show', views.show_problem, name='show_problem'),
     # Module 4
-path('problem/<int:problem_id>/show_my_problem', views.show_my_problem, name='show_my_problem'),
+    path('problem/<int:problem_id>/show_my_problem', views.show_my_problem, name='show_my_problem'),
 
-path('script/<int:script_id>/show_my_script', views.show_my_script, name='show_my_script'),
+    path('script/<int:script_id>/show_my_script', views.show_my_script, name='show_my_script'),
 
-path('script/<int:script_id>/show', views.show_script, name='show_script'),
-path('problem/<int:problem_id>/edit', views.edit_problem,  name='edit_problem'),
-path('script/<int:script_id>/edit', views.edit_script, name='edit_script'),
+    path('script/<int:script_id>/show', views.show_script, name='show_script'),
+    path('problem/<int:problem_id>/edit', views.edit_problem,  name='edit_problem'),
+    path('script/<int:script_id>/edit', views.edit_script, name='edit_script'),
+    path('script/<int:script_id>/get_script', views.get_script, name='get_script'),
+    # path('script/<int:script_id>/show', views.scripts, name='scripts'),
 
 ]
