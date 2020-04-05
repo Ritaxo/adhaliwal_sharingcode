@@ -2,9 +2,14 @@
 
 {% block content %}
 
+
+
 <div class="has-text-centered tile is-ancestor">
           <div style="margin: auto" class="tile is-8 is-parent">
               <div class="tile is-child box">
+                {% if error %}
+                  		<h3 class="title is-3" style="color: red">{{ error }}</h3>
+                {% endif %}
                   <h1 class="title is-2"> Hello <span style="color:#1496ed">{{ user.username }}</span> </h1>
            <h2 class="title is-3">Welcome to solving problems with python.</h2>
            <h4 class="title is-5" style="color:#1496ed">Take a look at the list of available problems: </h4>
@@ -18,5 +23,6 @@
                   </div>
               </div>
 {% endfor %}
+
 
 {% endblock content %}

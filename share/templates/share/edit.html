@@ -1,0 +1,87 @@
+{% extends "share/base.html" %}
+{% block content %}
+
+<div class="columns">
+    <div class="column is-one-fifth">
+    </div>
+
+    <div class="column" >
+
+      {% if error %}
+        <h3 class="title is-3" style="color: red">{{ error }}</h3>
+      {% endif %}
+
+      <h4 class="title is-5"> Update your problem</h4>
+
+      <form action="{% url 'share:update_problem' problem.id %}" method="post">
+        {% csrf_token %}
+
+        <div class="field">
+          <div class="control">
+            <label class="label">*Problem title</label>
+            <input class="input is-primary" value="{{ problem.title }}" type="text" name="title">
+          </div>
+        </div>
+
+        <div class="field">
+              <div class="control">
+                <label class="label">*Description</label>
+                <textarea class="input is-primary" name="description" namerows="4" cols="50" >{{problem.description }}
+                </textarea>
+              </div>
+        </div>
+
+        <div class="field">
+          <div class="control">
+            <label class="label">Discipline</label>
+            <select class="input is-primary" value="{{ problem.discipline }}" name="discipline">
+              <option value="english">English</option>
+              <option value="social science">Social science</option>
+              <option value="science">Science</option>
+              <option value="math">Math</option>
+              <option value="gaming">Gaming</option>
+              <option value="education">Education</option>
+              <option value="general">General</option>
+            </select>
+          </div>
+        </div>
+
+        <!--
+       <hr> ######### testing ########  <br>
+       make_public: {{problem.make_public}} <br>
+       #################################### <br>
+       -->
+
+        <label class="checkbox">
+            {% if  problem.make_public %}
+              <br>This problem is Public!
+
+            {% else %}
+              <br>This problem is Private! Do you want to make this problem public?
+              <input type="checkbox"  id="make_public" name="make_public" />
+
+            {% endif %}
+        </label>
+
+        <br><br><br>
+
+        <div class="field">
+            <div class="control">
+              <button class="button is-success is-outlined is-fullwidth" type="submit" value="Update">Update</button>&nbsp;
+            </div>
+        </div>
+
+        </form>
+
+        <h3 class="title is-5">Delete Problem {{ problem.title }}</h3>
+        <form action="{% url 'share:delete_problem' problem.id %}" method="post">
+            {% csrf_token %}
+             <button class="button is-danger is-outlined is-fullwidth" type="submit" name="delete" value="Delete">Delete</button>&nbsp;
+
+        </form>
+
+</div>
+<div class="column ">
+</div>
+
+{% endblock content %}
