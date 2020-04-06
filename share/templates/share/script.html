@@ -2,33 +2,66 @@
 
 {% block content %}
 
-<h2 class="title is-2">Python script </h2>
+<!-- objects passed by the view function: user, script, problem -->
+
+{% if error %}
+  <h3 class="title is-3" style="color: red">{{ error }}</h3>
+{% endif %}
+
+<hr> ##### testing ####  <br>
+problem: {{problem}} <br>
+script: {{script}} <br>
+######################## <br>
+
+
+<h2 class="title is-2">Python script: {{ script.title }}, written by {{ script.coder.user.username}}</h2>
         <div class="box">
         <div class="content">
-            {% if script.make_public %}
 
-              Title of the python script: {{ script.title }} <br>
+              <br>
               Description: {{ script.description }} <br>
-              Created on {{ script.created }} <br>
-              Problem that solves: {{ problem.title}}, posted by {{problem.coder.user.username}} <br>
-              Script written by: {{ script.coder.user.username}}
+              {% if script.url %}
+              URL: {{ script.url }} <br>
+              {% endif %}
+
+              {% if script.input %}
+              Input: {{ script.input }} <br>
+              {% endif %}
+
+              {% if script.output %}
+              Output: {{ script.output }} <br>
+              {% endif %}
+              {% if script.working_code %}
+                This script is working! <br><br>
+              {% else %}
+                This script is not yet working!<br><br>
+              {% endif %}
+
+              Created on {{ script.created }}, Updated on {{ script.updated }} <br><br>
+
+              {% if script.make_public %}
+                This script is public! <br><br>
+              {% else %}
+                This script is private!<br><br>
+              {% endif %}
+
+              <!-- create a link to the problem that it solves -->
+              Problem that solves:
+              <a class="button is-primary is-small" href="{% url 'share:show_problem' problem.id %}">  {{ problem.title}} </a>,
+              posted by {{problem.coder.user.username}} <br>
               <br>
               <br>
-              <div class="box">
+              <div class="box">     <!-- we should also show the RAW text --> <!-- See pastebin -->
               Python script:
                     <div class="code">
                           <br>{{ script.code }}
                       </div>
               </div>
-
+              <br>
               {% if user.id == script.coder.user.id %}
-                <a class="button is-primary is-medium" href="{% url 'share:edit_script' script.id %}">Make changes to this script </a>
-              {% endif %}
- 
-            {% else %}
-            Sorry this script is private!
-            {% endif %}
+              <a class="button is-primary is-medium" href="{% url 'share:edit_script' script.id %}">Make changes to this script ... </a>
 
+              {% endif %}
         </div>
     </div>
 

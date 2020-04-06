@@ -4,6 +4,8 @@ from django.http import HttpResponse
 
 from share.models import Script
 
+
+
 # Module 3 imports
 # import three functions: authentication, login, logout
 from django.contrib.auth import authenticate, login, logout
@@ -151,7 +153,7 @@ def dashboard(request):
     if request.method == "GET":
         user = request.user
         if not user.is_authenticated:
-            return redirect("share:login")
+	        return redirect("share:login")
         else:
             my_problems = Problem.objects.filter(coder=user.coder.id)   # Problem table has a coder field (FK)
             my_scripts =  Script.objects.filter(coder=user.coder.id)
@@ -160,6 +162,7 @@ def dashboard(request):
             print('my_problems:', my_problems)
             print('my_scripts:', my_scripts)
             print('*******************************')
+
 
             return render(request, "share/dashboard.html", {"my_scripts": my_scripts, "my_problems": my_problems })
 
@@ -173,7 +176,15 @@ def show_script(request, script_id):
             script = get_object_or_404(Script, pk=script_id)
             problem = get_object_or_404(Problem, pk=script.problem.id)
 
-            return render(request, "share/script.html", {"user":user, "script": script, "problem":problem})
+            # Module 7
+            if script.coder.user.id == user.id or script.make_public:
+                return render(request, "share/script.html",
+                {"user":user, "problem":problem, "script": script})
+            else:
+                # you are not the author
+                all_problems = Problem.objects.all()
+                return render(request, "share/index.html",
+                {"user":user, "all_problems": all_problems, "error":"The script you clicked is not public and you are not the author"})
 
 
 def edit_problem(request, problem_id):
@@ -239,6 +250,54 @@ def update_problem(request, problem_id):
         all_problems = Problem.objects.all()
         return render(request, "share/index.html", {"user":user, "all_problems": all_problems, "error":"Can't update!"})
 
+def update_script(request, script_id):
+    if request == "POST":
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse(status=500)
+
+        script = get_object_or_404(Script, pk = script_id)
+        problem = get_object_or_404(Problem, pk = script.problem.id)
+
+        if not request.POST["title"]: #this does not work with testarea form elements
+            return render(request, "share/edit_script.html", {"user":user, "script":script, "error":"One of the required fields was empty"})
+
+        else:
+            title = request.POST["title"]
+            description = request.POST["description"]
+            code = request.POST["code"]
+            url = request.POST["url"]
+            input = request.POST["input"]
+            output = request.POST["output"]
+            working_code = request.POST.get("working_code", False)
+            make_public = request.POST.get("make_public", False)
+
+            if working_code == "on":
+                working_code = True
+
+            else:
+                working_code = False
+
+            if make_public == "on":
+                make_public = True
+            else:
+                make_public = False
+
+            if script.coder.user.id == user.id:
+                Script.objects.filter(pk = script.id).update(title= title, description=description, code=code, url= url, output=output, input=input, make_public=make_public, working_code= working_code)
+
+                script = get_object_or_404(Script, pk = script_id) #get new updated record
+
+                return render(request, "share/script.html", {"user":user, "problem":problem, "script":script, "error":"Script Updated!"})
+
+            else:
+                #the user entering the http://127.0.0.1:18000/problem/8/update
+
+                user = request.user
+                all_problems = Probelm.objects.all()
+                return render(request, "share/index.html",{"user":user, "script":script, "problem":probelm, "error":"IT was not a POST request!"})
+
+
 def delete_problem(request, problem_id):
     if request.method == "POST":
         user = request.user
@@ -258,5 +317,34 @@ def delete_problem(request, problem_id):
     else:
         return HttpResponse(status=500)
 
+
+def delete_script(request, script_id):
+    if request.method =="POST":
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse(status = 500)
+
+        script = get_object_or_404(Script, pk = script_id)
+        if script.coder.user.id  == user.id:
+            Script.objects.get(pk = script_id).delete()
+            return redirect("share:dashboard")
+        else:
+            all_problems = Problem.objects.all()
+            return render(request, "share/index.html", {"user":user, "all_problems": all_problems, "error":"Can't delete the script!"})
+    else:
+        return HttpResponse(status=500)
+
+
 def edit_script(request, script_id):
-    pass
+    if request.method == "GET":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("share:login")
+
+        script = get_object_or_404_(Script, pk = script_id)
+        problem = get_object_or_404_(Probelm, pk = script.problem.id)
+
+        if script.coder.user.id == user.id:
+            return render(request, "share/edit_script.html", {"user":user, "script":script})
+        else:
+            return render(request, "share/edit_script.html", {"user":user, "script":script, "problem":problem, "error":"You can't edit this script!"})
