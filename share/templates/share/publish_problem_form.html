@@ -1,0 +1,62 @@
+{% extends "share/base.html" %}
+{% block content %}
+
+    <div class="publish-form columns">
+
+        <div class="column" >
+            <h4 class="title is-5">Define your new problem:</h4>
+             {% if error %}
+                    <h3 style="color: red">{{ error }}</h3>
+                {% endif %}
+            <form action="{% url 'share:create_problem' %}" method="post">
+            {% csrf_token %}
+                <div class="field">
+                  <div class="control">
+                    <label class="label">*Title</label>
+                    <input class="input is-primary" placeholder="Title" type="text" name="title">
+                  </div>
+                </div>
+
+                <div class="field">
+                      <div class="control">
+                        <label class="label">*Description</label>
+                        <textarea class="input is-primary" name="description" namerows="4" cols="50" >
+                        </textarea>
+                      </div>
+                </div>
+
+                <div class="field">
+                  <div class="control">
+                    <label class="label">Discipline</label>
+                    <select class="input is-primary" name="discipline">
+                      <option value="english">English</option>
+                      <option value="social science">Social science</option>
+                      <option value="science">Science</option>
+                      <option value="math">Math</option>
+                      <option value="gaming">Gaming</option>
+                      <option value="education">Education</option>
+                      <option value="general">General</option>
+                    </select>
+                  </div>
+                </div>
+
+
+                <label class="checkbox">
+                  <br>Do you want to make this problem public?
+                      <input type="checkbox"  id="make_public" name="make_public" />
+                </label>
+
+                <br><br><br>
+
+                <div class="field">
+                  <div class="control">
+                    <button class="button is-success is-outlined is-fullwidth" type="submit" value="Publish">Publish</button>&nbsp;
+                  </div>
+                </div>
+
+            </form>
+         </div>
+    </div>
+
+
+{% endblock content %}

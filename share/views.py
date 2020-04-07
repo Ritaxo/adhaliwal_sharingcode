@@ -4,7 +4,7 @@ from django.http import HttpResponse
 
 from share.models import Script
 
-
+from django.shortcuts import render, get_object_or_404
 
 # Module 3 imports
 # import three functions: authentication, login, logout
@@ -108,11 +108,51 @@ def logout_view(request):
     logout(request)
     return redirect("share:login")
 
-def dashboard_view(request):
-    pass
-def publish_problem(request):
-    pass
 
+def publish_problem(request):
+    if request.method == "GET":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("share:login")
+        else:
+            return render(request, "share/publish_problem_form.html", {"user":user} )
+
+def create_problem(request):
+    if request.method == "POST":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("share:login")
+
+        coder = user.coder
+        title = request.POST["title"]
+        description = request.POST["description"]
+        discipline = request.POST["discipline"]
+        make_public = request.POST.get('make_public', False)
+        if make_public == 'on':
+            make_public = True
+        else:
+            make_public = False
+
+        if not title and not description:
+            return render(request, "share/publish_problem_form.html", {"error":"Please fill in all required fields"})
+
+        try:
+            problem = Problem.objects.create(coder=coder, title=title, description=description, discipline=discipline, make_public=make_public)
+            problem.save()
+
+            problem = get_object_or_404(Problem, pk=problem.id)
+            scripts = Script.objects.filter(problem=problem.id)
+
+            return render(request, "share/problem.html",{"user":user, "problem":problem, "scripts": scripts})
+
+        except:
+            return render(request, "share/publish_problem_form.html", {"error":"Can't create the problem"})
+
+    else:
+        # the user enteing    http://127.0.0.1:8000/problem/8/create
+        user = request.user
+        all_problems = Problem.objects.all()
+        return render(request, "share/index.html", {"user":user, "all_problems": all_problems, "error":"Can't create!"})
 # Module 4
 def show_problem(request, problem_id):
     if request.method == "GET":
@@ -199,6 +239,12 @@ def edit_problem(request, problem_id):
         scripts = Script.objects.filter(problem=problem_id)
 
         if problem.coder.user.id == user.id:
+            return render(request, "share/edit_problem.html", {"problem":problem})
+        else:
+            return render(request, "share/index.html",
+            {"error":"You are not the author of the problem that you tried to edit."})
+
+        if problem.coder.user.id == user.id and not scripts and not problem.make_public:
             return render(request, "share/edit_problem.html", {"problem":problem})
         else:
             return render(request, "share/index.html",
@@ -341,8 +387,8 @@ def edit_script(request, script_id):
         if not user.is_authenticated:
             return redirect("share:login")
 
-        script = get_object_or_404_(Script, pk = script_id)
-        problem = get_object_or_404_(Probelm, pk = script.problem.id)
+        script = get_object_or_404(Script, pk = script_id)
+        problem = get_object_or_404(Problem, pk = script.problem.id)
 
         if script.coder.user.id == user.id:
             return render(request, "share/edit_script.html", {"user":user, "script":script})

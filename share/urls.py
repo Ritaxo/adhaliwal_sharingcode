@@ -14,7 +14,8 @@ urlpatterns = [
     path('logout', views.logout_view, name='logout'),
     path('signup', views.signup, name='signup'),
     path('dashboard', views.dashboard, name='dashboard'),
-    path('publish_problem', views.publish_problem, name='publish_problem'),
+    path('publish/problem', views.publish_problem, name='publish_problem'),
+    path("problem/create", views.create_problem, name="create_problem"),
     path('problem/<int:problem_id>/show', views.show_problem, name='show_problem'),
     # Module 4
 
@@ -23,7 +24,9 @@ path('script/<int:script_id>/show', views.show_script, name='show_script'),
 path('problem/<int:problem_id>/edit', views.edit_problem,  name='edit_problem'),
 path('script/<int:script_id>/edit', views.edit_script, name='edit_script'),
 path('problem/<int:problem_id>/update', views.update_problem, name='update_problem'),
+path('script/<int:script_id>/update', views.update_script, name='update_script'),
 path('problem/<int:problem_id>/delete', views.delete_problem, name='delete_problem'),
+path('script/<int:script_id>/delete', views.delete_script, name='delete_script'),
 
 
 ]

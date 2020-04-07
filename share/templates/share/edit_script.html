@@ -1,0 +1,123 @@
+{% extends "share/base.html" %}
+{% block content %}
+
+<!-- objects passed by the view function: user, script -->
+<!--
+<hr> ##### testing ####  <br>
+script: {{script}} <br>
+######################## <br>
+-->
+
+{% if error %}
+  <h3 class="title is-3" style="color: red">{{ error }}</h3>
+{% endif %}
+
+<div class="columns">
+    <div class="column is-one-fifth">
+    </div>
+
+    <div class="column" >
+      <h4 class="title is-5"> Make changes to your script</h4>
+
+      <form action="{% url 'share:update_script' script.id %}" method="post">
+        {% csrf_token %}
+
+        <div class="field">
+          <div class="control">
+            <label class="label">*Script title</label>
+            <input class="input is-primary" value="{{ script.title }}" type="text" name="title">
+          </div>
+        </div>
+
+        <div class="field">
+              <div class="control">
+                <label class="label">*Description (add test cases)</label>
+                <textarea class="input is-primary" name="description" namerows="4" cols="50" >{{script.description }}
+                </textarea>
+              </div>
+        </div>
+
+        <div class="field">
+          <div class="control">
+            <!-- Part for Tatiana -->
+
+            <label class="label">*Code</label>
+            <textarea class="input is-primary code" name="code" namerows="4" cols="50" > {{script.code }}
+            </textarea>
+          </div>
+        </div>
+
+        <div class="field">
+              <div class="control">
+                <label class="label">Optional URL</label>
+                <input class="input is-primary" value= "{{ script.url }}" type="text" name="url">
+              </div>
+        </div>
+
+        <div class="field">
+          <div class="control">
+            <label class="label">Input</label>
+            <textarea class="input is-primary" name="input" namerows="4" cols="50" >{{script.input }}
+            </textarea>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="control">
+            <label class="label">Output:</label>
+            <textarea class="input is-primary" name="output" namerows="4" cols="50" >{{script.output }}
+            </textarea>
+          </div>
+        </div>
+
+        <label class="checkbox">
+            {% if script.make_public %}
+              <br>This script is Public!
+
+            {% else %}
+              <br>This problem is Private! Do you want to make this problem public?
+              <input type="checkbox"  id="make_public" name="make_public" />
+
+            {% endif %}
+        </label>
+
+
+		<label class="checkbox">
+            {% if script.working_code %}
+              <br>This script is Working!
+
+            {% else %}
+              <br>This problem is NOT working!
+              <input type="checkbox"  id="working_code" name="working_code" />
+            {% endif %}
+        </label>
+
+
+        <br><br>
+        <label class="checkbox">
+              <br>Is this NOW working code?
+              <input type="checkbox"  id="working_code" name="working_code" />
+        </label>
+        <br><br><br>
+
+        <div class="field">
+            <div class="control">
+              <button class="button is-success is-outlined is-fullwidth" type="submit" value="Update">
+                Update</button>&nbsp;
+            </div>
+        </div>
+
+        </form>
+
+        <h3 class="title is-5">Delete Script {{ script.title }}</h3>
+        <form action="{% url 'share:delete_script' script.id %}" method="get">
+            {% csrf_token %}
+             <button class="button is-danger is-outlined is-fullwidth" type="submit" name="delete" value="Delete">Delete</button>&nbsp;
+
+        </form>
+
+</div>
+<div class="column ">
+</div>
+
+{% endblock content %}
