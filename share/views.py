@@ -49,6 +49,73 @@ def index(request):
             return redirect("share:login")
     else:
         return HttpResponse(status=500)
+
+def build_script(request, problem_id):
+    if request.method == "GET":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("share:login")
+        else:
+            problem = get_object_or_404(Problem, pk = problem_id )
+            return render(request, "share/build_script_form.html", {"user": user, "problem":problem})
+
+
+def create_script(request, problem_id):
+    if request.method == "POST":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("share:login")
+
+        problem = get_object_or_404(Problem, pk = problem_id)
+
+        if not request.POST["title"]: #this does not work with textares form elements
+            return render(request, "share/build_script_form.html", {"user": user, "problem":problem, "error":"One of the required fields was empty"})
+
+        else:
+            coder = user.coder
+            title = request.POST["title"]
+            description = request.POST["description"]
+            code = request.POST["code"]
+            url = request.POST["url"]
+            input = request.POST["input"]
+            output = request.POST["output"]
+            working_code = request.POST.get('working_code', False)
+            make_public = request.POST.get('make_public', False)
+
+            if working_code == 'on':
+                working_code = True
+            else:
+                working_code = False
+
+            if make_public == 'on':
+                make_public = True
+            else:
+                make_public = False
+
+        # Validate URL in Script (for future work)
+            """
+           try:
+               URLValidator()(url)
+           except:
+               return render(request, "share/build_script_form.html", {"error":"URL is not valid"})
+           """
+
+            try:
+                script = Script.objects.create(coder=coder, problem=problem, title=title, description=description, code=code, url=url, input=input, output=output, working_code=working_code, make_public=make_public)
+                script.save()
+
+                script = get_object_or_404(Script, pk=script.id)
+                problem = get_object_or_404(Problem, pk=problem_id)
+                return render(request, "share/script.html",{"user":user, "problem":problem, "script": script})
+
+            except:
+                return render(request, "share/build_script_form.html", {"error":"Can't create the script"})
+
+    else:
+        # the user enteing    http://127.0.0.1:8000/problem/8/create
+        user = request.user
+        all_problems = Problem.objects.all()
+        return render(request, "share/index.html", {"user":user, "all_problems": all_problems, "error":"Can't create!"})
 # Module 3 Authentication functions
 
 def signup(request):
@@ -363,6 +430,7 @@ def delete_problem(request, problem_id):
     else:
         return HttpResponse(status=500)
 
+# if script doesnt exist error should load
 
 def delete_script(request, script_id):
     if request.method =="POST":

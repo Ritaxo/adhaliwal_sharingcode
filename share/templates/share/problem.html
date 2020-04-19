@@ -1,13 +1,7 @@
-<!-- show a problem belonging to any user  -->
 {% extends "share/base.html" %}
 {% block content %}
 
-<!--
-<hr> ##### testing ####  <br>
-problem: {{problem}} <br>
-scripts: {{scripts}} <br>
-######################## <br>
--->
+<!-- objects passed by the view function: user, problem, scripts  -->
 
     <div class="columns">
         <div class="column">
@@ -42,23 +36,28 @@ scripts: {{scripts}} <br>
                         <div class="content">
                             <br>Script title: {{ s.title }}, written by  {{s.coder.user.username}}
                             <a class="button is-primary is-small"
-                           href="{% url 'share:show_script' s.id %}">Show the script ...</a>
+                            href="{% url 'share:show_script' s.id %}">Show the script ...</a>
 
                         </div>
                       {% endfor %}
                     </div>
                     {% else %}
 
-                    These are solutions written for this problem
+                    These are NO solutions written for this problem
 
                   {% endif %}
                   <br><br>
-                  <!-- Module 6 -->
                   {% if user.id == problem.coder.user.id and not scripts and not problem.make_public  %}
                     <a class="button is-primary is-medium"
-                      href="{% url 'share:edit_problem' problem.id %}">Make changes ... </a>
+                       href="{% url 'share:edit_problem' problem.id %}">Make changes to this problem ... </a>
                   {% endif %}
 
+                  <br><br>
+                  <!-- Module 9 -->
+                  {% if not user_script %}
+                    <a class="button is-primary is-medium"
+                    href="{% url 'share:build_script' problem.id %}">Create a Python solution for this problem ... </a>
+                  {% endif %} 
               </div>
           </div>
 
