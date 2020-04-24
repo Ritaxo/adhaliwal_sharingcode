@@ -230,6 +230,7 @@ def show_problem(request, problem_id):
             # make sure to import the fucntion get_object_or_404 from  django.shortcuts
             problem = get_object_or_404(Problem, pk=problem_id)
             scripts = Script.objects.filter(problem=problem_id)
+            user_script = Script.objects.filter(coder=user.id).filter(problem=problem.id)
 
             # Module 6
             if problem.make_public or problem.coder.user.id == user.id:
