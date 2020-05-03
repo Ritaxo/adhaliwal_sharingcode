@@ -11,8 +11,13 @@
 <hr> ##### testing ####  <br>
 problem: {{problem}} <br>
 script: {{script}} <br>
+reviews: {{reviews}} <br>
+user_review: {{ user_review }} <br>
 ######################## <br>
 
+<div class="columns">
+
+<div class="column is-three-forths-widescreen" >
 
 <h2 class="title is-2">Python script: {{ script.title }}, written by {{ script.coder.user.username}}</h2>
         <div class="box">
@@ -62,7 +67,82 @@ script: {{script}} <br>
               <a class="button is-primary is-medium" href="{% url 'share:edit_script' script.id %}">Make changes to this script ... </a>
 
               {% endif %}
-        </div>
-    </div>
+              <!-- Module 10 Review form -->
+                      <!-- if the user has already written a review, show the content of the review on the right column, button to delete -->
 
-{% endblock content %}
+                      <!-- if the logged user has not written a review yet and
+                     she is not the author of the script, then show the review form -->
+                      {% if not user_review and user.id != script.coder.user.id %}
+                              <h2 class="title is-4">Write your review </h2>
+
+                              <form action="{% url 'share:create_review' script.id %}" method="post">
+                              {% csrf_token %}
+
+                              I found this solution to be:
+                              <!-- https://versions.bulma.io/0.7.1/documentation/form/radio/  -->
+                              <span class="control">
+                                <label class="radio"> <input type="radio" value="confusing" name="stars"> Confusing </label>
+                                <label class="radio"> <input type="radio" value="clear" name="stars"> Clear </label>
+                                <label class="radio"> <input type="radio" value="outstanding" name="stars"> Outstanding </label>
+                              </span>
+
+                            <!-- http://versions.bulma.io/0.7.1/documentation/form/textarea/ -->
+                            <div class="field"> <div class="control"> <textarea class="textarea is-warning" name="feedback"
+                               placeholder="e.g. thank you for writing this solution, I was wondering if ..."></textarea></div>
+                            </div>
+
+                            <div class="field"> <div class="control"> <button class="button is-success is-outlined" type="submit">
+                                                                      Post review </button>&nbsp; </div>
+                            </div>
+
+                        </form>
+
+                      {% endif %}
+
+                </div>
+            </div>
+        </div> <!-- column -->
+
+        <!-- Module 10 This column is to list all the reviews for this script -->
+        <!-- Add recent reviews on the right column -->
+        <div class="column is-one-quarter">
+
+        <br><br>
+          <h2 class="title is-4">Reviews</h2>
+                  <div class="box">
+                  <div class="content">
+                  {% if reviews %}
+                    {% for r in reviews %}
+                          {% if r.stars == 1 %} Confusing
+                          {% elif r.stars == 2 %} Clear
+                          {% elif r.stars == 3 %} Outstanding
+                          {% endif %}
+                          by {{r.coder.user.username}} <br>
+                          {{ r.feedback }}<br>
+
+                          {% if r.coder.user.id == user.id %}
+                          <form action="{% url 'share:delete_review' r.id %}" method="post">
+                              {% csrf_token %}
+                               <button class="button is-danger is-outlined" type="submit" name="delete" value="Delete">
+                                 Delete My Review</button>&nbsp;
+
+                          </form>
+
+                        {% endif %}
+                      </div>
+                    {% endfor %}
+                  {% else %}
+                  No reviews yet!
+                  {% endif %}
+
+
+        </div>
+
+        </div>
+
+        </div> <!-- columns -->
+
+
+
+
+        {% endblock content %}

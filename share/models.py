@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
 
 class Coder(models.Model):
@@ -48,3 +48,16 @@ class Script(models.Model):
 
     created = models.DateField(auto_now=True)
     updated = models.DateField(auto_now=True)
+
+
+class Review(models.Model):
+    def __str__(self):
+        return self.feedback
+
+    script = models.ForeignKey(Script, on_delete=models.CASCADE)
+    coder = models.ForeignKey(Coder, on_delete=models.CASCADE)
+    stars = models.IntegerField(validators=[MinValueValidator(1),MaxValueValidator(3)])
+    feedback = models.TextField(max_length=200, unique=False, blank=True)
+
+    class Meta:
+        unique_together = (('coder', 'script'),)

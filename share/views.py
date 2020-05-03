@@ -14,10 +14,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 
 # import all the models created so far
-from .models import Script, Problem, Coder
+#from .models import Script, Problem, Coder
 
 # import User model
 from django.contrib.auth.models import User
+
+from .models import Script, Problem, Coder, Review
 
 # Module 1
 def get_first_script(request):
@@ -284,16 +286,22 @@ def show_script(request, script_id):
             script = get_object_or_404(Script, pk=script_id)
             problem = get_object_or_404(Problem, pk=script.problem.id)
 
+            # Module 10
+            reviews = Review.objects.filter(script=script_id)
+            print("******************************")
+            print(reviews)
+
             # Module 7
             if script.coder.user.id == user.id or script.make_public:
                 return render(request, "share/script.html",
                 {"user":user, "problem":problem, "script": script})
             else:
                 # you are not the author
+                 # you are not the author
                 all_problems = Problem.objects.all()
                 return render(request, "share/index.html",
-                {"user":user, "all_problems": all_problems, "error":"The script you clicked is not public and you are not the author"})
-
+                {"user":user, "all_problems": all_problems,
+                "error":"The script you clicked is not public and you are not the author"})
 
 def edit_problem(request, problem_id):
     if request.method == "GET":
@@ -463,3 +471,77 @@ def edit_script(request, script_id):
             return render(request, "share/edit_script.html", {"user":user, "script":script})
         else:
             return render(request, "share/edit_script.html", {"user":user, "script":script, "problem":problem, "error":"You can't edit this script!"})
+
+def create_review(request,script_id):
+    if request.method == "POST":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("share:login")
+
+        script = get_object_or_404(Script, pk=script_id)
+        problem = get_object_or_404(Problem, pk=script.problem.id)
+
+        coder = user.coder
+        feedback = request.POST["feedback"]
+
+        stars = request.POST.get('stars', False)
+        print('************************')
+        print(stars)
+
+        if stars == 'Confusing':
+            stars = 1
+        elif stars ==  "Clear":
+            stars = 2
+        else:
+            stars = 3
+
+        try:
+            review = Review.objects.create(coder=coder, script=script, feedback=feedback, stars=stars)
+            review.save()
+            # script.html  needs user, script, problem, reviews, user_review
+            reviews = Review.objects.filter(script=script_id)
+            user_review = Review.objects.filter(coder=user.id).filter(script=script.id)
+
+            return render(request, "share/script.html",
+            {"user":user, "problem":problem, "script": script, "reviews":reviews, "user_review":user_review})
+
+        except:
+            return render(request, "share/script.html", {"error":"Can't create the script"})
+
+    else:
+        # the user enteing    http://127.0.0.1:8000/problem/8/create
+        user = request.user
+        all_problems = Problem.objects.all()
+        return render(request, "share/index.html", {"user":user, "all_problems": all_problems, "error":"Can't create review!"})
+
+def delete_review(request, review_id):
+    if request.method == "POST":
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse(status=500)
+
+        review = get_object_or_404(Review, pk=review_id)
+
+        # script.html needs user, script, problem, reviews, user_review
+        script = get_object_or_404(Script, pk=review.script.id)
+        problem = get_object_or_404(Problem, pk=script.problem.id)
+
+
+        if review.coder.user.id == user.id:
+            Review.objects.get(pk=review_id).delete()
+
+            reviews = Review.objects.filter(script=script.id)
+            user_review = Review.objects.filter(coder=user.id).filter(script=script.id)  # should retrive no obj
+
+            return render(request, "share/script.html",
+            {"user":user, "problem": problem, "script":script, "reviews":reviews, "user_review":user_review,
+            "error":"Review deleted!"})
+
+        else:
+            user_review = Review.objects.filter(coder=user.id).filter(script=script.id)  # should retrive no obj
+
+            return render(request, "share/script.html",
+            {"user":user, "problem": problem, "script":script, "reviews":reviews, "user_review":user_review, "error":"Can't delete the review!"})
+
+    else:
+        return HttpResponse(status=500)
