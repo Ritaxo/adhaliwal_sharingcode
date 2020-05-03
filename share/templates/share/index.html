@@ -15,11 +15,13 @@
            <h4 class="title is-5" style="color:#1496ed">Take a look at the list of available problems: </h4>
 
 <!-- we have the object {'all_problems': all_problems} from the views  -->
+
 {% for p in all_problems %}
               <div class="box">
                   <div class="content" align="left">
                       <a class="button is-success is-small" href="{% url 'share:show_problem' p.id %}">
                         {{ p.title }} </a> by {{ p.coder.user.username }}
+                        {{ p.num_of_scripts }} Python scripts
                   </div>
               </div>
 {% endfor %}

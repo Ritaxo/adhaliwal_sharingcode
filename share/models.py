@@ -25,6 +25,11 @@ class Problem(models.Model):
     created = models.DateField(auto_now=True)
     updated = models.DateField(auto_now=True)     # everytime the obj is saved, new time is saved
 
+    def num_of_scripts(self):
+    	scripts = Script.objects.filter(problem=self)
+    	return len(scripts)
+
+
 # Module 0 Create Script model
 # Module 1 Step 3 Update Script model
 class Script(models.Model):
@@ -48,6 +53,23 @@ class Script(models.Model):
 
     created = models.DateField(auto_now=True)
     updated = models.DateField(auto_now=True)
+
+    def num_of_reviews(self):
+    	reviews = Review.objects.filter(script=self)
+    	return len(reviews)
+
+    def avg_review(self):
+        sum = 0
+        reviews = Review.objects.filter(script=self)
+        for r in reviews:
+            sum += r.stars
+
+        if len(reviews) > 0:
+            return sum / len(reviews)
+        else:
+            return 0
+
+
 
 
 class Review(models.Model):

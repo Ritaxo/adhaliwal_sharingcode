@@ -21,6 +21,10 @@ from django.contrib.auth.models import User
 
 from .models import Script, Problem, Coder, Review
 
+# at the top
+from share.find_offensive_language import offensive
+
+
 # Module 1
 def get_first_script(request):
     if request.method == "GET":
@@ -496,6 +500,13 @@ def create_review(request,script_id):
             stars = 3
 
         try:
+            if offensive(feedback):
+                 reviews = Review.objects.filter(script=script_id)
+                 user_review = Review.objects.filter(coder=user.id).filter(script=script.id)
+
+                 return render(request, "share/script.html",
+               {"user":user, "problem":problem, "script": script, "reviews":reviews, "user_review":user_review, "error":"Can't create the review with offensive language"})
+
             review = Review.objects.create(coder=coder, script=script, feedback=feedback, stars=stars)
             review.save()
             # script.html  needs user, script, problem, reviews, user_review
