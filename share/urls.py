@@ -31,5 +31,6 @@ path('problem/<int:problem_id>/delete', views.delete_problem, name='delete_probl
 path('script/<int:script_id>/delete', views.delete_script, name='delete_script'),
 path('script/<int:script_id>/create_review', views.create_review, name='create_review'),
 path('review/<int:review_id>/delete_review', views.delete_review, name='delete_review'),
+path('search', views.search, name='search'),
 
 ]

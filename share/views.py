@@ -545,3 +545,21 @@ def delete_review(request, review_id):
 
     else:
         return HttpResponse(status=500)
+
+# Module 11
+def search(request):
+    if request.method == "POST":
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse(status=500)
+
+        query = request.POST["query"]
+
+        if not query:
+            return render(request, "share/search_result.html", {"error":"Empty search"})
+
+        scripts = Script.objects.filter(title__icontains=query) | Script.objects.filter(description__icontains=query)
+
+        return render(request, "share/search_result.html", {"user":user, "scripts":scripts, "query":query})
+    else:
+        return HttpResponse(status=500)

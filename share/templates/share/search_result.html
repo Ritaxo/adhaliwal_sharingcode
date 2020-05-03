@@ -1,0 +1,28 @@
+{% extends "share/base.html" %}
+{% block content %}
+<!-- objects passed by the view function: user, scripts -->
+
+    {% if error %}
+        <h3 style="color: red">{{ error }}</h3>
+
+    {% endif %}
+    <div class="columns">
+        <div class="column">
+            <h1 style="color: #0f81cc" class="title">Search results for {{query}}</h1>
+            {% for s in scripts %}
+                <div class="box">
+                    <div class="content">
+                      Python script: {{ s.title }} <br>Written by {{ s.coder.user.username}}
+
+                      <a class="button is-primary is-small"
+                      href="{% url 'share:show_script' s.id %}">Show the script ...</a>
+
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+
+{% endblock content %}
